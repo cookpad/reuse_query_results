@@ -3,8 +3,10 @@ ENV['RAILS_ENV'] ||= 'test'
 $LOAD_PATH.unshift(File.join(__dir__, '..', 'lib'))
 $LOAD_PATH.unshift(__dir__)
 
+
 require 'rails'
 require 'reuse_query_results'
+require 'reuse_query_results/active_record_monkey_patch'
 require 'fake_app'
 
 RSpec.configure do |config|
