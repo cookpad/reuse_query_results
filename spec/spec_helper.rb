@@ -14,6 +14,6 @@ RSpec.configure do |config|
 
   config.after :each do
     ReuseQueryResults.storage.clear_all
-    [Foo, Bar, Baz].each {|m| m.delete_all }
+    [Foo, Bar].each {|m| m.delete_all }
   end
 end

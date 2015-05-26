@@ -20,8 +20,6 @@ class Bar < ActiveRecord::Base
   belongs_to :foo
 end
 
-class Baz < ActiveRecord::Base; end
-
 # migrations
 class CreateAllTables < ActiveRecord::Migration
   def self.up
