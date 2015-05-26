@@ -7,16 +7,18 @@ module ReuseQueryResults
       @storage ||= Storage::Memory.new
     end
 
+
     def cache(connection, sql, &block)
+      database = connection.instance_variable_get(:'@config')[:database]
       case sql.strip
       when (/\AINSERT INTO (?:\.*[`"]?([^.\s`"]+)[`"]?)*/i)
-        return storage.clear_and_execute($1, &block)
+        return storage.clear_and_execute(database, $1, &block)
       when (/\ADELETE (?:\.*[`"]?([^.\s`"]+)[`"]?)*/i)
-        return storage.clear_and_execute($1, &block)
+        return storage.clear_and_execute(database, $1, &block)
       when (/\AUPDATE (?:\.*[`"]?([^.\s`"]+)[`"]?)*/i)
-        return storage.clear_and_execute($1, &block)
+        return storage.clear_and_execute(database, $1, &block)
       when (/\ASELECT\s+.*FROM\s+"?([^\.\s'"]+)"?/im)
-        return storage.fetch_or_execute(sql_to_key(sql), sql, &block)
+        return storage.fetch_or_execute(database, sql_to_key(sql), sql, &block)
       end
       block.call
     end

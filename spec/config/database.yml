@@ -3,3 +3,9 @@ test:
   database: test.sqlite3
   pool: 5
   timeout: 5000
+
+alter_test:
+  adapter: sqlite3
+  database: test_alter.sqlite3
+  pool: 5
+  timeout: 5000

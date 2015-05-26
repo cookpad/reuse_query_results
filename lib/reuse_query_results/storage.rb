@@ -1,55 +1,57 @@
 module ReuseQueryResults
   module Storage
     class Base
-      def add(table, sql, result)
+      def add(database, table, sql, result)
         raise NotImplementedError
       end
 
-      def fetch(table, sql)
+      def fetch(database, table, sql)
         raise NotImplementedError
       end
 
-      def clear(table)
+      def clear(database, table)
         raise NotImplementedError
       end
 
-      def fetch_or_execute(key, sql, &block)
-        cached_result = fetch(key, sql)
+      def fetch_or_execute(database, key, sql, &block)
+        cached_result = fetch(database, key, sql)
         if cached_result
           Rails.logger.debug("HIT REUSE CACHE: #{sql}")
-          return cached_result 
+          return cached_result
         end
-        block.call.tap { |result| add(key, sql, result) }
+        block.call.tap { |result| add(database, key, sql, result) }
       end
 
-      def clear_and_execute(table, &block)
-        clear(table)
+      def clear_and_execute(database, table, &block)
+        clear(database, table)
         block.call
       end
     end
 
     class Memory < Base
-      attr_reader :tables
+      attr_reader :databases
       def initialize
         clear_all
       end
 
-      def add(key, sql, result)
-        @tables[key][sql] = result
+      def add(database, key, sql, result)
+        @databases[database][key][sql] = result
       end
 
-      def fetch(key, sql)
-        @tables[key][sql]
+      def fetch(database, key, sql)
+        @databases[database][key][sql]
       end
 
       def clear_all
-        @tables = Hash.new { |k,v| k[v] = {} }
+        @databases = Hash.new do |h, k| 
+          h[k] = Hash.new { |h2, k2| h2[k2] = {} }
+        end
       end
 
-      def clear(table)
-        keys = @tables.keys.select { |key| (/##{key}(?:\z|\s)/) }
+      def clear(database, table)
+        keys = @databases[database].keys.select { |key| (/##{key}(?:\z|\s)/) }
         keys.each do |key|
-          @tables[key] = {}
+          @databases[database][key] = {}
         end
       end
     end
