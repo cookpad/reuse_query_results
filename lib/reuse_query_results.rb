@@ -13,7 +13,7 @@ module ReuseQueryResults
       case sql.strip
       when (/\AINSERT INTO (?:\.*[`"]?([^.\s`"]+)[`"]?)*/i)
         return storage.clear_and_execute(database, $1, &block)
-      when (/\ADELETE (?:\.*[`"]?([^.\s`"]+)[`"]?)*/i)
+      when (/\ADELETE FROM (?:\.*[`"]?([^.\s`"]+)[`"]?)*/i)
         return storage.clear_and_execute(database, $1, &block)
       when (/\AUPDATE (?:\.*[`"]?([^.\s`"]+)[`"]?)*/i)
         return storage.clear_and_execute(database, $1, &block)
