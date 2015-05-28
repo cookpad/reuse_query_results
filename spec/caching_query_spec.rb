@@ -83,18 +83,17 @@ module ReuseQueryResults
       end
     end
 
-    context 'with include' do
+    context 'with join' do
       it 'cache result' do
-        Bar.create!(foo_id: Foo.create!)
-        Foo.includes(:bar).first.bar
-        expect(ReuseQueryResults.storage.databases[test_database_name][%w(foos)].keys.size).to eq 1
-        expect(ReuseQueryResults.storage.databases[test_database_name][%w(bars)].keys.size).to eq 1
+        Bar.create!(foo_id: Foo.create!.id)
+        Foo.joins(:bar).first
+        expect(ReuseQueryResults.storage.databases[test_database_name][%w(bars foos)].keys.size).to eq 1
       end
 
       it 'clear cache when insert' do
-        Foo.includes(:bar).first
+        Foo.joins(:bar).first
         Foo.create!
-        expect(ReuseQueryResults.storage.databases[test_database_name][%w(foos)].keys.size).to eq 0
+        expect(ReuseQueryResults.storage.databases[test_database_name][%w(bars foos)].keys.size).to eq 0
       end
     end
 
