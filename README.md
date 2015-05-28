@@ -8,7 +8,7 @@ No more db requests.
 Add this line to your application's Gemfile:
 
 ```ruby
-gem 'reuse_query_results', git: 'https://github.com/eudoxa/reuse_query_results'
+gem 'reuse_query_results', git: 'https://github.com/cookpad/reuse_query_results'
 ```
 
 And then execute:
@@ -20,9 +20,17 @@ Or install it yourself as:
     $ gem install reuse_query_results
 
 ## Usage
-run command on development environment 
+run command on development environment .
 ```
 REUSE_QUERY_RESULTS=1 rails server
+```
+
+Can share update status between separated applications.
+```ruby
+# initializers/reuse_query_results.rb
+memcache = ActiveSupport::Cache.lookup_store(:dalli_store, address)
+ReuseQueryResults.storage = ReuseQueryResults::Storage.new(sync_client: memcache)
+
 ```
 
 ## Contributing
