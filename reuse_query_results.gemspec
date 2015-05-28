@@ -8,8 +8,8 @@ Gem::Specification.new do |spec|
   spec.version       = ReuseQueryResults::VERSION
   spec.authors       = ["morita shingo"]
   spec.email         = ["eudoxa.jp@gmail.com"]
-  spec.summary       = %q{TODO: Write a short summary. Required.}
-  spec.description   = %q{TODO: Write a longer description. Optional.}
+  spec.summary       = "Reuse sql query results on development"
+  spec.description       = "Reuse sql query results on development"
   spec.homepage      = ""
   spec.license       = "MIT"
 
