@@ -4,7 +4,11 @@ require "reuse_query_results/storage"
 module ReuseQueryResults
   class << self
     def storage
-      @storage ||= Storage::Memory.new
+      @storage ||= Storage.new
+    end
+
+    def storage=(storage)
+      @storage = storage
     end
 
 
@@ -18,18 +22,13 @@ module ReuseQueryResults
       when (/\AUPDATE (?:\.*[`"]?([^.\s`"]+)[`"]?)*/i)
         return storage.clear_and_execute(database, $1, &block)
       when (/\ASELECT\s+.*FROM\s+"?([^\.\s'"]+)"?/im)
-        return storage.fetch_or_execute(database, sql_to_key(sql), sql, &block)
+        return storage.fetch_or_execute(database, tables(sql), sql, &block)
       end
       block.call
     end
 
-    def sql_to_key(sql)
-      tables = sql.scan(/(?:FROM|JOIN)\s+[`"]?([^\.\s'`"]+)(?:[`"]?)/).flatten
-      tables_to_key(tables)
-    end
-
-    def tables_to_key(tables)
-      tables.sort.map {|table| "##{table}" }.join(' ')
+    def tables(sql)
+      sql.scan(/(?:FROM|JOIN)\s+[`"]?([^\.\s'`"]+)(?:[`"]?)/).flatten.sort
     end
   end
 end
